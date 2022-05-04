@@ -215,6 +215,13 @@
         "error_heading": "Please adjust the following:"
       }
     },
+    "ajax_api": {
+      "product_recommendations": {
+        "title": "Product recommendations",
+        "input": "ID",
+        "submit": "Submit"
+      }
+    },
     "404": {
       "title": "Page not found",
       "subtext": "404"

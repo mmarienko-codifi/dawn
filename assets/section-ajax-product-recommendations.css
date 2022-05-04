@@ -1,0 +1,16 @@
+.product-recommendations {
+  display: block;
+}
+
+.product-recommendations__heading {
+  margin: 0;
+  margin-bottom: 3rem;
+}
+
+.product-recommendations:not(.product-recommendations--loaded) #product-recommendations{
+  display: none;
+}
+
+.product-recommendations__row {
+  display: flex;
+}
