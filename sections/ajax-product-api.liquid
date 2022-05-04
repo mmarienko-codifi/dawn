@@ -1,6 +1,6 @@
 {{ 'component-card.css' | asset_url | stylesheet_tag }}
 {{ 'component-price.css' | asset_url | stylesheet_tag }}
-{{ 'section-ajax-product-recommendations.css' | asset_url | stylesheet_tag }}
+{{ 'section-ajax-product-api.css' | asset_url | stylesheet_tag }}
 
 {%- style -%}
   .section-{{ section.id }}-padding {
@@ -17,49 +17,46 @@
 {%- endstyle -%}
 
 <div class="color-{{ section.settings.color_scheme }} gradient">
-  <ajax-product-recommendations class="product-recommendations page-width section-{{ section.id }}-padding">
-    <h2 class="product-recommendations__heading {{ section.settings.heading_size }}">{{ section.settings.heading | escape }}</h2>
-    <div class="product-recommendations__row">
+  <ajax-product-api class="product-api page-width section-{{ section.id }}-padding">
+    <h2 class="product-api__heading {{ section.settings.heading_size }}">{{ section.settings.heading | escape }}</h2>
+    <div class="product-api__row">
       <div class="field">
-        <input type="tel" id="ProductRecommendationsInput-{{ section.id }}" class="field__input" placeholder="{{ 'templates.ajax.form.id' | t }}">
-        <label class="field__label" for="ProductRecommendationsInput-{{ section.id }}">{{ 'templates.ajax.form.id' | t }}</label>
+        <input type="tel" id="ProductApiInput-{{ section.id }}" class="field__input" placeholder="{{ 'templates.ajax.form.handler' | t }}">
+        <label class="field__label" for="ProductApiInput-{{ section.id }}">{{ 'templates.ajax.form.handler' | t }}</label>
       </div>
-      <button type="submit" class="button" id="ProductRecommendationsButton-{{ section.id }}">{{ 'templates.ajax.form.submit' | t }}</button>
+      <button type="submit" class="button" id="ProductApiButton-{{ section.id }}">{{ 'templates.ajax.form.submit' | t }}</button>
     </div>
-    <div id="product-recommendations">
-      {% if recommendations.performed and recommendations.products_count > 0 %}
-        <ul class="grid product-grid grid--{{ section.settings.columns_desktop }}-col-desktop grid--{{ section.settings.columns_mobile }}-col-tablet-down" role="list">
-          {% for recommendation in recommendations.products %}
-            <li class="grid__item">
-              {% render 'card-product',
-                card_product: recommendation,
-                media_aspect_ratio: section.settings.image_ratio,
-                show_secondary_image: section.settings.show_secondary_image,
-                show_vendor: section.settings.show_vendor,
-                show_rating: section.settings.show_rating
-              %}
-            </li>
-          {% endfor %}
-        </ul>
-      {% endif %}
+    <div id="product-api">
+      {{ product.description }}
+      <ul class="grid product-grid grid--{{ section.settings.columns_desktop }}-col-desktop grid--{{ section.settings.columns_mobile }}-col-tablet-down" role="list">
+        <li class="grid__item">
+          {% render 'card-product',
+            card_product: product,
+            media_aspect_ratio: section.settings.image_ratio,
+            show_secondary_image: section.settings.show_secondary_image,
+            show_vendor: section.settings.show_vendor,
+            show_rating: section.settings.show_rating
+          %}
+        </li>
+      </ul>
     </div>
-  </ajax-product-recommendations>
+  </ajax-product-api>
 </div>
 
 {% javascript %}
-  class AjaxProductRecommendations extends HTMLElement {
+  class AjaxProductApi extends HTMLElement {
     constructor() {
       super();
 
-      this.input = this.querySelector('[id^="ProductRecommendationsInput-"]');
-      this.button = this.querySelector('[id^="ProductRecommendationsButton-"]');
+      this.input = this.querySelector('[id^="ProductApiInput-"]');
+      this.button = this.querySelector('[id^="ProductApiButton-"]');
 
       this.button.addEventListener('click', this.inject.bind(this));
     }
 
     inject() {
-      const selector = '#product-recommendations';
-      fetch(window.Shopify.routes.root + `recommendations/products?product_id=${this.input.value}&limit=4&section_id=ajax-product-recommendations`)
+      const selector = '#product-api';
+      fetch(window.Shopify.routes.root + `products/${this.input.value}?section_id=ajax-product-api`)
       .then(response => {
         if (!response.ok) {
           this.querySelector(selector).innerHTML = 'Error: ' + response.statusText;
@@ -69,10 +66,10 @@
       .then((text) => {
         const html = document.createElement('div');
         html.innerHTML = text;
-        const recommendations = html.querySelector(selector);
+        const product = html.querySelector(selector);
 
-        if (recommendations && recommendations.innerHTML.trim().length) {
-          this.querySelector(selector).innerHTML = recommendations.innerHTML;
+        if (product && product.innerHTML.trim().length) {
+          this.querySelector(selector).innerHTML = product.innerHTML;
         }
       })
       .catch(e => {
@@ -81,7 +78,7 @@
     }
   }
 
-  customElements.define('ajax-product-recommendations', AjaxProductRecommendations);
+  customElements.define('ajax-product-api', AjaxProductApi);
 {% endjavascript %}
 
 {% schema %}

@@ -10,7 +10,7 @@
     "ajax-product-recommendations": {
       "type": "ajax-product-recommendations",
       "settings": {
-        "heading": "You may also like",
+        "heading": "Product recommendations",
         "heading_size": "h2",
         "columns_desktop": 4,
         "color_scheme": "background-1",
@@ -31,26 +31,20 @@
         "padding_bottom": 36
       }
     },
-    "ajax-cart-footer": {
-      "type": "ajax-cart-footer",
-      "blocks": {
-        "subtotal": {
-          "type": "subtotal",
-          "settings": {
-          }
-        },
-        "buttons": {
-          "type": "buttons",
-          "settings": {
-          }
-        }
-      },
-      "block_order": [
-        "subtotal",
-        "buttons"
-      ],
+    "ajax-product-api": {
+      "type": "ajax-product-api",
       "settings": {
-        "show_cart_note": false
+        "heading": "Product",
+        "heading_size": "h2",
+        "columns_desktop": 4,
+        "color_scheme": "background-1",
+        "image_ratio": "square",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 28
       }
     }
   },
@@ -58,6 +52,6 @@
     "main",
     "ajax-product-recommendations",
     "ajax-cart-items",
-    "ajax-cart-footer"
+    "ajax-product-api"
   ]
 }

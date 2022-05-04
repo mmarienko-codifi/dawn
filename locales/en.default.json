@@ -216,8 +216,9 @@
       }
     },
     "ajax": {
-      "product_recommendations": {
+      "form": {
         "id": "ID",
+        "handler": "Handler",
         "submit": "Submit"
       }
     },
