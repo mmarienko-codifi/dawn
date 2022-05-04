@@ -22,10 +22,42 @@
         "padding_top": 36,
         "padding_bottom": 28
       }
+    },
+    "ajax-cart-items": {
+      "type": "ajax-cart-items",
+      "settings": {
+        "show_vendor": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "ajax-cart-footer": {
+      "type": "ajax-cart-footer",
+      "blocks": {
+        "subtotal": {
+          "type": "subtotal",
+          "settings": {
+          }
+        },
+        "buttons": {
+          "type": "buttons",
+          "settings": {
+          }
+        }
+      },
+      "block_order": [
+        "subtotal",
+        "buttons"
+      ],
+      "settings": {
+        "show_cart_note": false
+      }
     }
   },
   "order": [
     "main",
-    "ajax-product-recommendations"
+    "ajax-product-recommendations",
+    "ajax-cart-items",
+    "ajax-cart-footer"
   ]
 }

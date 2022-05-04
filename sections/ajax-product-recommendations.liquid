@@ -18,16 +18,14 @@
 
 <div class="color-{{ section.settings.color_scheme }} gradient">
   <ajax-product-recommendations class="product-recommendations page-width section-{{ section.id }}-padding">
-    <div class="product-recommendations__heading">
-      <h2 class="product-recommendations__title {{ section.settings.heading_size }}">{{ 'templates.ajax_api.product_recommendations.title' | t }}</h2>
-      <div class="product-recommendations__row">
-        <div class="field">
-          <input type="tel" id="ProductRecommendationsInput-{{ section.id }}" class="field__input" placeholder="Product ID">
-          <label class="field__label" for="ProductRecommendationsInput-{{ section.id }}">{{ 'templates.ajax_api.product_recommendations.input' | t }}</label>
-        </div>
-        <button type="submit" class="button" id="ProductRecommendationsButton-{{ section.id }}">{{ 'templates.ajax_api.product_recommendations.submit' | t }}</button>
+    <h2 class="product-recommendations__heading {{ section.settings.heading_size }}">{{ section.settings.heading | escape }}</h2>
+    <div class="product-recommendations__row">
+      <div class="field">
+        <input type="tel" id="ProductRecommendationsInput-{{ section.id }}" class="field__input" placeholder="Product ID">
+        <label class="field__label" for="ProductRecommendationsInput-{{ section.id }}">{{ 'templates.ajax.product_recommendations.id' | t }}</label>
       </div>
-    </div> 
+      <button type="submit" class="button" id="ProductRecommendationsButton-{{ section.id }}">{{ 'templates.ajax.product_recommendations.submit' | t }}</button>
+    </div>
     <div id="product-recommendations">
       {% if recommendations.performed and recommendations.products_count > 0 %}
         <ul class="grid product-grid grid--{{ section.settings.columns_desktop }}-col-desktop grid--{{ section.settings.columns_mobile }}-col-tablet-down" role="list">

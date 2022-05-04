@@ -215,10 +215,9 @@
         "error_heading": "Please adjust the following:"
       }
     },
-    "ajax_api": {
+    "ajax": {
       "product_recommendations": {
-        "title": "Product recommendations",
-        "input": "ID",
+        "id": "ID",
         "submit": "Submit"
       }
     },
