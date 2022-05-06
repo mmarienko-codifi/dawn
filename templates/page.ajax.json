@@ -23,6 +23,38 @@
         "padding_bottom": 28
       }
     },
+    "ajax-cart-add-item": {
+      "type": "ajax-cart-add-item",
+      "settings": {
+        "heading": "Add product to cart",
+        "heading_size": "h2",
+        "columns_desktop": 4,
+        "color_scheme": "background-1",
+        "image_ratio": "square",
+        "show_secondary_image": false,
+        "show_vendor": true,
+        "show_rating": false,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 28
+      }
+    },
+    "ajax-cart-delete-item": {
+      "type": "ajax-cart-delete-item",
+      "settings": {
+        "heading": "Delete product from cart",
+        "heading_size": "h2",
+        "columns_desktop": 4,
+        "color_scheme": "background-1",
+        "image_ratio": "square",
+        "show_secondary_image": false,
+        "show_vendor": true,
+        "show_rating": false,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 28
+      }
+    },
     "ajax-cart-items": {
       "type": "ajax-cart-items",
       "settings": {
@@ -51,6 +83,8 @@
   "order": [
     "main",
     "ajax-product-recommendations",
+    "ajax-cart-add-item",
+    "ajax-cart-delete-item",
     "ajax-cart-items",
     "ajax-product-api"
   ]
