@@ -17,16 +17,32 @@
 {%- endstyle -%}
 
 <div class="color-{{ section.settings.color_scheme }} gradient">
-  <ajax-product-recommendations class="product-recommendations page-width section-{{ section.id }}-padding">
-    <h2 class="product-recommendations__heading {{ section.settings.heading_size }}">{{ section.settings.heading | escape }}</h2>
-    <div class="product-recommendations__row">
-      <div class="field">
-        <input type="tel" id="ProductRecommendationsInput-{{ section.id }}" class="field__input" placeholder="{{ 'templates.ajax.form.id' | t }}">
-        <label class="field__label" for="ProductRecommendationsInput-{{ section.id }}">{{ 'templates.ajax.form.id' | t }}</label>
-      </div>
-      <button type="submit" class="button" id="ProductRecommendationsButton-{{ section.id }}">{{ 'templates.ajax.form.submit' | t }}</button>
+  <ajax-product-recommendations class="ajax-product-recommendations page-width section-{{ section.id }}-padding">
+    <h2 class="ajax-product-recommendations__heading {{ section.settings.heading_size }}">{{ section.settings.heading | escape }}</h2>
+    <div class="field ajax-product-recommendations__field">
+      <input type="tel" id="AjaxProductRecommendationsInput-{{ section.id }}" class="field__input ajax-product-recommendations__input" placeholder="{{ 'templates.ajax.form.id' | t }}">
+      <label class="field__label ajax-product-recommendations__label" for="AjaxProductRecommendationsInput-{{ section.id }}">{{ 'templates.ajax.form.id' | t }}</label>
+      <button type="submit" class="button field__button ajax-product-recommendations__button" id="AjaxProductRecommendationsButton-{{ section.id }}">
+        <span>
+          {{ 'templates.ajax.form.submit' | t }}
+        </span>
+        <div class="loading-overlay__spinner hidden">
+          <svg aria-hidden="true" focusable="false" role="presentation" class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+            <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+          </svg>
+        </div>
+      </button>
     </div>
-    <div id="product-recommendations">
+    <div class="ajax-product-recommendations__error-message-wrapper" role="alert" hidden>
+      <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-error" viewBox="0 0 13 13">
+        <circle cx="6.5" cy="6.50049" r="5.5" stroke="white" stroke-width="2"></circle>
+        <circle cx="6.5" cy="6.5" r="5.5" fill="#EB001B" stroke="#EB001B" stroke-width="0.7"></circle>
+        <path d="M5.87413 3.52832L5.97439 7.57216H7.02713L7.12739 3.52832H5.87413ZM6.50076 9.66091C6.88091 9.66091 7.18169 9.37267 7.18169 9.00504C7.18169 8.63742 6.88091 8.34917 6.50076 8.34917C6.12061 8.34917 5.81982 8.63742 5.81982 9.00504C5.81982 9.37267 6.12061 9.66091 6.50076 9.66091Z" fill="white"></path>
+        <path d="M5.87413 3.17832H5.51535L5.52424 3.537L5.6245 7.58083L5.63296 7.92216H5.97439H7.02713H7.36856L7.37702 7.58083L7.47728 3.537L7.48617 3.17832H7.12739H5.87413ZM6.50076 10.0109C7.06121 10.0109 7.5317 9.57872 7.5317 9.00504C7.5317 8.43137 7.06121 7.99918 6.50076 7.99918C5.94031 7.99918 5.46982 8.43137 5.46982 9.00504C5.46982 9.57872 5.94031 10.0109 6.50076 10.0109Z" fill="white" stroke="#EB001B" stroke-width="0.7">
+      </path></svg>
+      <span class="ajax-product-recommendations__error-message"></span>
+    </div>
+    <div id="ajax-product-recommendations">
       {% if recommendations.performed and recommendations.products_count > 0 %}
         <ul class="grid product-grid grid--{{ section.settings.columns_desktop }}-col-desktop grid--{{ section.settings.columns_mobile }}-col-tablet-down" role="list">
           {% for recommendation in recommendations.products %}
@@ -43,7 +59,7 @@
         </ul>
       {% else %}
         <ul class="grid product-grid grid--{{ section.settings.columns_desktop }}-col-desktop grid--{{ section.settings.columns_mobile }}-col-tablet-down" role="list">
-          {% for recommendation in (1..4) %}
+          {% for recommendation in (1..5) %}
             <li class="grid__item">
               {% render 'card-product',
                 card_product: product,
@@ -65,19 +81,21 @@
     constructor() {
       super();
 
-      this.input = this.querySelector('[id^="ProductRecommendationsInput-"]');
-      this.button = this.querySelector('[id^="ProductRecommendationsButton-"]');
+      this.input = this.querySelector('[id^="AjaxProductRecommendationsInput-"]');
+      this.button = this.querySelector('[id^="AjaxProductRecommendationsButton-"]');
 
       this.button.addEventListener('click', this.inject.bind(this));
     }
 
-    inject() {
-      const selector = '#product-recommendations';
-      fetch(window.Shopify.routes.root + `recommendations/products?product_id=${this.input.value}&limit=4&section_id=ajax-product-recommendations`)
+    inject(evt) {
+      evt.preventDefault();
+      this.enableLoading();
+
+      const selector = '#ajax-product-recommendations';
+      
+      fetch(window.Shopify.routes.root + `recommendations/products?product_id=${this.input.value}&limit=5&section_id=ajax-product-recommendations`)
       .then(response => {
-        if (!response.ok) {
-          this.querySelector(selector).innerHTML = 'Error: ' + response.statusText;
-        }
+        this.handleErrorMessage(response);
         return response.text()
       })
       .then((text) => {
@@ -89,9 +107,36 @@
           this.querySelector(selector).innerHTML = recommendations.innerHTML;
         }
       })
+      .finally(() => {
+        this.disableLoading();
+      })
       .catch(e => {
         console.error(e);
       });
+    }
+
+    enableLoading() {
+      this.button.classList.add('loading');
+      this.button.querySelector('.loading-overlay__spinner').classList.remove('hidden');
+      this.button.setAttribute('aria-disabled', true);
+    }
+  
+    disableLoading() {
+      this.button.classList.remove('loading');
+      this.button.querySelector('.loading-overlay__spinner').classList.add('hidden');
+      this.button.setAttribute('aria-disabled', false);
+    }
+
+    handleErrorMessage(response) {
+      this.errorMessageWrapper = this.errorMessageWrapper || this.querySelector('.ajax-product-recommendations__error-message-wrapper');
+      if (!this.errorMessageWrapper) return;
+      this.errorMessage = this.errorMessage || this.errorMessageWrapper.querySelector('.ajax-product-recommendations__error-message');
+
+      this.errorMessageWrapper.toggleAttribute('hidden', response.ok);
+
+      if (!response.ok) {
+        this.errorMessage.textContent = response.statusText;
+      }
     }
   }
 
@@ -100,19 +145,19 @@
 
 {% schema %}
 {
-  "name": "t:sections.product-recommendations.name",
+  "name": "t:sections.ajax-product-recommendations.name",
   "tag": "section",
   "class": "section",
   "settings": [
     {
       "type": "paragraph",
-      "content": "t:sections.product-recommendations.settings.paragraph__1.content"
+      "content": "t:sections.ajax-product-recommendations.settings.paragraph__1.content"
     },
     {
       "type": "text",
       "id": "heading",
       "default": "You may also like",
-      "label": "t:sections.product-recommendations.settings.heading.label"
+      "label": "t:sections.ajax-product-recommendations.settings.heading.label"
     },
     {
       "type": "select",
@@ -140,8 +185,8 @@
       "min": 2,
       "max": 10,
       "step": 1,
-      "default": 4,
-      "label": "t:sections.product-recommendations.settings.products_to_show.label"
+      "default": 5,
+      "label": "t:sections.ajax-product-recommendations.settings.products_to_show.label"
     },
     {
       "type": "range",
@@ -149,8 +194,8 @@
       "min": 1,
       "max": 5,
       "step": 1,
-      "default": 4,
-      "label": "t:sections.product-recommendations.settings.columns_desktop.label"
+      "default": 5,
+      "label": "t:sections.ajax-product-recommendations.settings.columns_desktop.label"
     },
     {
       "type": "select",
@@ -183,7 +228,7 @@
     },
     {
       "type": "header",
-      "content": "t:sections.product-recommendations.settings.header__2.content"
+      "content": "t:sections.ajax-product-recommendations.settings.header__2.content"
     },
     {
       "type": "select",
@@ -191,56 +236,56 @@
       "options": [
         {
           "value": "adapt",
-          "label": "t:sections.product-recommendations.settings.image_ratio.options__1.label"
+          "label": "t:sections.ajax-product-recommendations.settings.image_ratio.options__1.label"
         },
         {
           "value": "portrait",
-          "label": "t:sections.product-recommendations.settings.image_ratio.options__2.label"
+          "label": "t:sections.ajax-product-recommendations.settings.image_ratio.options__2.label"
         },
         {
           "value": "square",
-          "label": "t:sections.product-recommendations.settings.image_ratio.options__3.label"
+          "label": "t:sections.ajax-product-recommendations.settings.image_ratio.options__3.label"
         }
       ],
       "default": "adapt",
-      "label": "t:sections.product-recommendations.settings.image_ratio.label"
+      "label": "t:sections.ajax-product-recommendations.settings.image_ratio.label"
     },
     {
       "type": "checkbox",
       "id": "show_secondary_image",
       "default": false,
-      "label": "t:sections.product-recommendations.settings.show_secondary_image.label"
+      "label": "t:sections.ajax-product-recommendations.settings.show_secondary_image.label"
     },
     {
       "type": "checkbox",
       "id": "show_vendor",
       "default": false,
-      "label": "t:sections.product-recommendations.settings.show_vendor.label"
+      "label": "t:sections.ajax-product-recommendations.settings.show_vendor.label"
     },
     {
       "type": "checkbox",
       "id": "show_rating",
       "default": false,
-      "label": "t:sections.product-recommendations.settings.show_rating.label",
-      "info": "t:sections.product-recommendations.settings.show_rating.info"
+      "label": "t:sections.ajax-product-recommendations.settings.show_rating.label",
+      "info": "t:sections.ajax-product-recommendations.settings.show_rating.info"
     },
     {
       "type": "header",
-      "content": "t:sections.product-recommendations.settings.header_mobile.content"
+      "content": "t:sections.ajax-product-recommendations.settings.header_mobile.content"
     },
     {
       "type": "select",
       "id": "columns_mobile",
       "default": "2",
-      "label": "t:sections.product-recommendations.settings.columns_mobile.label",
+      "label": "t:sections.ajax-product-recommendations.settings.columns_mobile.label",
       "options": [
         {
           "value": "1",
-          "label": "t:sections.product-recommendations.settings.columns_mobile.options__1.label"
+          "label": "t:sections.ajax-product-recommendations.settings.columns_mobile.options__1.label"
         },
         {
           "value": "2",
-          "label": "t:sections.product-recommendations.settings.columns_mobile.options__2.label"
+          "label": "t:sections.ajax-product-recommendations.settings.columns_mobile.options__2.label"
         }
       ]
     },
