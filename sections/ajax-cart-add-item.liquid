@@ -74,14 +74,12 @@
         body: JSON.stringify(formData)
       })
       .then(response => {
-        return response.json()
-      })
-      .then(response => {
         this.handleErrorMessage(response);
         this.disableLoading();
         if (!response.status) {
           this.setSuccess();
         }
+        return response.json()
       })
       .finally(() => {
         this.updateCart();
@@ -119,10 +117,12 @@
       if (!this.errorMessageWrapper) return;
       this.errorMessage = this.errorMessage || this.errorMessageWrapper.querySelector('.cart-add-item__error-message');
 
-      this.errorMessageWrapper.toggleAttribute('hidden', !response.status);
+      this.errorMessageWrapper.toggleAttribute('hidden', response.ok);
+
+      console.log(response,3)
 
       if (!response.ok) {
-        this.errorMessage.textContent = response.status + '. ' + response.description;
+        this.errorMessage.textContent = response.statusText;
       }
     }
 
