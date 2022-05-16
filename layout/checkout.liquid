@@ -28,6 +28,16 @@
             {{ alternative_payment_methods }}
           </header>
           <main class="main__content" role="main">
+            {% comment %} Add custom field attribute {% endcomment %}
+            <div class="fieldset" id="field" style="display: none;">
+              <div class="field field--required">
+                <div class="field__input-wrapper">
+                  <label class="field__label field__label--visible" for="checkout_custom_attribute">Checkout note</label>
+                  <input placeholder="Checkout note" class="field__input" size="30" type="text" name="checkout[attributes][checkout-note]" id="note">
+                </div>
+              </div>        
+            </div>
+            {% comment %} - - - - - - - {% endcomment %}
             {{ content_for_layout }}
           </main>
           <footer class="main__footer" role="contentinfo">
@@ -47,3 +57,52 @@
     {{ tracking_code }}
   </body>
 </html>
+
+{% comment %} Add custom field attribute {% endcomment %}
+<script>
+  (function($) {
+    $(document).on("page:load page:change", function() {
+      if (Shopify.Checkout.step === "contact_information") {
+        document.getElementById('field').style.display = "block";
+        document.getElementById('note').value = sessionStorage.getItem("note");
+      }
+    });
+  })(Checkout.$);
+
+  document.getElementById('field').addEventListener("change", (event) => {
+    sessionStorage.setItem("note", event.target.value);
+  });
+</script>
+{% comment %} - - - - - - - {% endcomment %}
+
+{% comment %} Add a custom popup for a definite product {% endcomment %}
+<script>
+  (function($) {
+    $(document).on("page:load page:change", function() {
+      if (Shopify.Checkout.step === "contact_information") {
+        document.querySelectorAll('.product').forEach(product => {
+          if (product.dataset.productId == '5003258232891') {
+            const name = product.querySelector('.product__description__name').textContent.trim();
+            const price = product.querySelector('.product__price').textContent.trim();
+
+            setTimeout(() => {
+              alert(`${name} (${price}) was found!`);
+            }, 2000);
+          };
+        });
+      };
+    });
+  })(Checkout.$);
+</script>
+{% comment %} - - - - - - - {% endcomment %}
+
+{% comment %} Change chekout background {% endcomment %}
+<style>
+  .wrap {
+    background-color: rgba(255, 255, 255, 0.4);
+  }
+  .content {
+    background-color: #f88abd;
+  }
+</style>
+{% comment %} - - - - - - - {% endcomment %}
