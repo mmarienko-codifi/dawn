@@ -119,8 +119,6 @@
 
       this.errorMessageWrapper.toggleAttribute('hidden', response.ok);
 
-      console.log(response,3)
-
       if (!response.ok) {
         this.errorMessage.textContent = response.statusText;
       }
