@@ -1,0 +1,16 @@
+.ajax-product-recommendations {
+  display: block;
+}
+
+.ajax-product-recommendations__button {
+  color: rgb(var(--color-button-text));
+  background-color: rgba(var(--color-button), var(--alpha-button-background));
+}
+
+.ajax-product-recommendations__error-message-wrapper svg {
+  flex-shrink: 0;
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-right: 0.7rem;
+  margin-top: 0.5rem;
+}

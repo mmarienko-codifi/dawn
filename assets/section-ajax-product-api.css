@@ -1,0 +1,7 @@
+.product-api {
+  display: block;
+}
+
+.product-api__row {
+  display: flex;
+}

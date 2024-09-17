@@ -215,6 +215,13 @@
         "error_heading": "Please adjust the following:"
       }
     },
+    "ajax": {
+      "form": {
+        "id": "ID",
+        "handler": "Handler",
+        "submit": "Submit"
+      }
+    },
     "404": {
       "title": "Page not found",
       "subtext": "404"
